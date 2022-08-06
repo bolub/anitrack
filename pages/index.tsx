@@ -16,7 +16,7 @@ const Home: NextPage = () => {
   return (
     <>
       <Head>
-        <title>Anilist</title>
+        <title>Anitrack</title>
         <meta name='description' content='Anitrack' />
         <link rel='icon' href='/favicon.ico' />
       </Head>
