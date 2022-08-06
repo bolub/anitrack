@@ -1,6 +1,13 @@
-import { Container, Text, chakra } from '@chakra-ui/react';
+import {
+  Container,
+  Text,
+  chakra,
+  Button,
+  useColorMode,
+} from '@chakra-ui/react';
 import type { NextPage } from 'next';
 import Head from 'next/head';
+import { HiOutlineMoon, HiOutlineSun } from 'react-icons/hi';
 import { useQuery } from 'react-query';
 import { Watching } from '../components/Watching';
 import { ToWatch } from '../components/Watching/ToWatch';
@@ -13,6 +20,7 @@ const Home: NextPage = () => {
     getAllToWatch
   );
 
+  const { colorMode, toggleColorMode } = useColorMode();
   return (
     <>
       <Head>
@@ -33,6 +41,16 @@ const Home: NextPage = () => {
           >
             anitrack
           </Text>
+
+          <Button
+            p={1}
+            rounded='full'
+            my='auto'
+            ml='auto'
+            onClick={toggleColorMode}
+          >
+            {colorMode === 'light' ? <HiOutlineMoon /> : <HiOutlineSun />}
+          </Button>
         </Container>
       </chakra.nav>
 

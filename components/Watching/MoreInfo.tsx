@@ -22,6 +22,7 @@ import {
   IconButton,
   useToast,
   Stack,
+  useColorMode,
 } from '@chakra-ui/react';
 import { AnimeWatchingProps } from '../../utils/GenericTypes';
 import Image from 'next/image';
@@ -94,6 +95,8 @@ const MoreInfo: FC<{
     animeData?.episodeWatching
   );
 
+  const { colorMode } = useColorMode();
+
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
@@ -105,12 +108,7 @@ const MoreInfo: FC<{
           <Flex>
             {/* content */}
             <Box>
-              <chakra.h3
-                fontWeight={'semibold'}
-                fontSize='xl'
-                textShadow='md'
-                color='white'
-              >
+              <chakra.h3 fontWeight={'semibold'} fontSize='xl' textShadow='md'>
                 {animeData?.titleEnglish}{' '}
                 {animeData?.titleJapanese && `(${animeData?.titleJapanese})`}
               </chakra.h3>
@@ -121,13 +119,12 @@ const MoreInfo: FC<{
               >
                 {type === 'watching' && (
                   <>
-                    <Text fontWeight={'medium'} textShadow='md' color='white'>
+                    <Text fontWeight={'medium'} textShadow='md'>
                       Stopped watching at ep
                       <Input
                         variant='unstyled'
                         fontWeight={'medium'}
                         textShadow='md'
-                        color='white'
                         value={episodeWatching}
                         onChange={(e) => {
                           setCurrentEpisode(e.target.value);
@@ -141,17 +138,12 @@ const MoreInfo: FC<{
                       display={{ base: 'none', md: 'block' }}
                       w={2}
                       h={2}
-                      bg='white'
+                      bg={colorMode === 'light' ? 'black' : 'white'}
                       rounded={'full'}
                     ></Box>
                   </>
                 )}
-                <Text
-                  as='span'
-                  fontWeight={'medium'}
-                  textShadow='md'
-                  color='white'
-                >
+                <Text as='span' fontWeight={'medium'} textShadow='md'>
                   {animeData?.episodeCount ? (
                     <>
                       {animeData?.episodeCount} episode
@@ -248,7 +240,6 @@ const MoreInfo: FC<{
                 fontSize={'sm'}
                 fontWeight={'medium'}
                 textShadow='md'
-                color='white'
               >
                 From {dayjs(animeData?.airedFrom).format('Do MMM YYYY')} to{' '}
                 {dayjs(animeData?.airedTo).format('Do MMM YYYY')}
@@ -256,13 +247,17 @@ const MoreInfo: FC<{
             </HStack>
 
             <HStack>
-              <Box w={2} h={2} bg='white' rounded={'full'}></Box>
+              <Box
+                w={2}
+                h={2}
+                bg={colorMode === 'light' ? 'black' : 'white'}
+                rounded={'full'}
+              ></Box>
               <Text
                 as='span'
                 fontSize={'sm'}
                 fontWeight={'medium'}
                 textShadow='md'
-                color='white'
               >
                 {animeData?.minsPerEpisode}
               </Text>
