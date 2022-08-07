@@ -33,9 +33,10 @@ import {
   HiOutlineClock,
   HiOutlineDotsHorizontal,
 } from 'react-icons/hi';
-import { useMutation } from 'react-query';
+import { useMutation, useQueryClient } from 'react-query';
 import { removeFromWatch, removeFromWatching } from '../../API/removeFromList';
 import { updateData, updateProps } from '../../API/updateData';
+import { addToWatching } from '../../API/addToList';
 dayjs.extend(advancedFormat);
 
 const MoreInfo: FC<{
@@ -47,16 +48,20 @@ const MoreInfo: FC<{
   type: string;
 }> = ({ disclosure, data, type }) => {
   const { isOpen, onClose } = disclosure;
+  const [isMoving, setIsMoving] = useState(false);
 
   const animeData = data?.fields;
 
   const toast = useToast();
+  const queryClient = useQueryClient();
 
   const { mutate: removeWatchingHandler, isLoading: removeWatchingLoading } =
     useMutation(removeFromWatching, {
       onSuccess(data) {
+        queryClient.invalidateQueries(['allWatching']);
+
         toast({
-          description: 'Deleted successfully',
+          description: 'Removed',
           status: 'success',
           duration: 9000,
           isClosable: true,
@@ -68,8 +73,29 @@ const MoreInfo: FC<{
   const { mutate: removeWatchHandler, isLoading: removeFromWatchLoading } =
     useMutation(removeFromWatch, {
       onSuccess(data) {
+        queryClient.invalidateQueries(['allToWatch']);
+
+        if (!isMoving) {
+          toast({
+            description: 'Removed',
+            status: 'success',
+            duration: 9000,
+            isClosable: true,
+            position: 'top-right',
+          });
+        }
+
+        setIsMoving(false);
+      },
+    });
+
+  const { mutate: updateWatchingHandler, isLoading: updateLoading } =
+    useMutation(updateData, {
+      onSuccess(data) {
+        queryClient.invalidateQueries(['allWatching']);
+
         toast({
-          description: 'Deleted successfully',
+          description: 'Updated successfully',
           status: 'success',
           duration: 9000,
           isClosable: true,
@@ -78,11 +104,14 @@ const MoreInfo: FC<{
       },
     });
 
-  const { mutate: updateWatchingHandler, isLoading: updateLoading } =
-    useMutation(updateData, {
+  const { mutate: addToWatchingHandler, isLoading: addToWatchingLoading } =
+    useMutation(addToWatching, {
       onSuccess(data) {
+        queryClient.invalidateQueries(['allWatching']);
+        queryClient.invalidateQueries(['allToWatch']);
+
         toast({
-          description: 'Updated successfully',
+          description: 'Nice addition',
           status: 'success',
           duration: 9000,
           isClosable: true,
@@ -125,7 +154,7 @@ const MoreInfo: FC<{
                         variant='unstyled'
                         fontWeight={'medium'}
                         textShadow='md'
-                        value={episodeWatching}
+                        value={episodeWatching ?? 1}
                         onChange={(e) => {
                           setCurrentEpisode(e.target.value);
                         }}
@@ -196,6 +225,8 @@ const MoreInfo: FC<{
                   <MenuList>
                     <MenuItem
                       onClick={() => {
+                        setIsMoving(true);
+
                         if (type === 'watching') {
                           removeWatchingHandler({
                             id: data?.id,
@@ -210,6 +241,33 @@ const MoreInfo: FC<{
                       }}
                     >
                       Remove...forever
+                    </MenuItem>
+                    <MenuItem
+                      onClick={() => {
+                        removeWatchHandler({
+                          id: data?.id,
+                        });
+
+                        addToWatchingHandler([
+                          {
+                            fields: {
+                              titleEnglish: animeData?.titleEnglish,
+                              titleJapanese: animeData?.titleJapanese,
+                              description: animeData?.description,
+                              minsPerEpisode: animeData?.minsPerEpisode,
+                              episodeCount: animeData?.episodeCount,
+                              // @ts-ignore
+                              airedFrom: animeData?.airedFrom,
+                              // @ts-ignore
+                              airedTo: animeData?.airedTo,
+                              currentlyAiring: animeData?.currentlyAiring,
+                              imageUrl: animeData?.imageUrl,
+                            },
+                          },
+                        ]);
+                      }}
+                    >
+                      Start watching
                     </MenuItem>
                   </MenuList>
                 </Menu>
