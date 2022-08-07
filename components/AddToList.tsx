@@ -24,7 +24,7 @@ import {
 import Image from 'next/image';
 import { FC, useState } from 'react';
 import { HiOutlinePlus, HiOutlineSearch } from 'react-icons/hi';
-import { useMutation, useQuery } from 'react-query';
+import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { useDebounce } from 'react-use';
 import { addToWatch, addToWatching } from '../API/addToList';
 import { getAllAnime } from '../API/all';
@@ -55,10 +55,15 @@ const AddToList: FC<{ type: string }> = ({ type }) => {
 
   const toast = useToast();
 
+  const queryClient = useQueryClient();
+
   // Add to watchlist
   const { mutate: addToWatchingHandler, isLoading: addToWatchingLoading } =
     useMutation(addToWatching, {
       onSuccess(data) {
+        queryClient.invalidateQueries(['allWatching']);
+        queryClient.invalidateQueries(['allToWatch']);
+
         toast({
           description: 'Added successfully',
           status: 'success',
@@ -72,6 +77,8 @@ const AddToList: FC<{ type: string }> = ({ type }) => {
   const { mutate: addToWatchHandler, isLoading: addToWatchLoading } =
     useMutation(addToWatch, {
       onSuccess(data) {
+        queryClient.invalidateQueries(['allWatching']);
+        queryClient.invalidateQueries(['allToWatch']);
         toast({
           description: 'Added successfully',
           status: 'success',
