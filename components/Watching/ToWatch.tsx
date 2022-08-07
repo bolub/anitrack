@@ -12,6 +12,8 @@ import {
   HStack,
   IconButton,
   Skeleton,
+  Box,
+  Center,
 } from '@chakra-ui/react';
 
 import AnimeComp from './AnimeComp';
@@ -75,13 +77,30 @@ const ToWatch: FC<{ data: AnimeWatchingProps[]; loading: boolean }> = ({
             </>
           ) : (
             <>
-              {data?.map((animData: AnimeWatchingProps) => {
-                return (
-                  <SwiperSlide key={animData.id}>
-                    <AnimeComp data={animData} type='toWatch' />
-                  </SwiperSlide>
-                );
-              })}
+              {data?.length > 0 ? (
+                <>
+                  {data?.map((animData: AnimeWatchingProps) => {
+                    return (
+                      <SwiperSlide key={animData.id}>
+                        <AnimeComp data={animData} type='toWatch' />
+                      </SwiperSlide>
+                    );
+                  })}
+                </>
+              ) : (
+                <SwiperSlide>
+                  <Center
+                    display='flex'
+                    bg='rgba(255, 255, 255, 0.08)'
+                    h='466px'
+                    textAlign={'center'}
+                    w='full'
+                    rounded='sm'
+                  >
+                    Why am I empty? 😔
+                  </Center>
+                </SwiperSlide>
+              )}
             </>
           )}
         </Swiper>
