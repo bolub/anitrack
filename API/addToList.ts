@@ -16,3 +16,19 @@ export const addToWatch = async (data: AnimeWatchingCreateProps[]) => {
 
   return response.data;
 };
+
+export const addToFinished = async (data: AnimeWatchingCreateProps[]) => {
+  const response = await API.post(`/finished`, {
+    records: [...data],
+  });
+
+  return response.data;
+};
+
+export const addToAbandoned = async (data: AnimeWatchingCreateProps[]) => {
+  const response = await API.post(`/abandoned`, {
+    records: [...data],
+  });
+
+  return response.data;
+};

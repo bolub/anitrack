@@ -26,7 +26,7 @@ import 'swiper/css';
 import AddToList from '../AddToList';
 import { AnimeWatchingProps } from '../../utils/GenericTypes';
 
-const Watching: FC<{ data: AnimeWatchingProps[]; loading: boolean }> = ({
+const Finished: FC<{ data: AnimeWatchingProps[]; loading: boolean }> = ({
   data,
   loading,
 }) => {
@@ -36,7 +36,7 @@ const Watching: FC<{ data: AnimeWatchingProps[]; loading: boolean }> = ({
   });
 
   return (
-    <chakra.section>
+    <chakra.section mt={20}>
       <Container maxW='6xl'>
         {/* Header */}
         <Flex mb={2}>
@@ -45,19 +45,19 @@ const Watching: FC<{ data: AnimeWatchingProps[]; loading: boolean }> = ({
             <Icon as={HiOutlineEye} w='20px' h='20px' />
 
             <chakra.h2 fontWeight={'bold'} fontSize='sm'>
-              Watching({data?.length})
+              Finished({data?.length})
             </chakra.h2>
           </HStack>
 
           {/* action */}
-          <AddToList type='watching' />
+          <AddToList type='finished' />
         </Flex>
 
         {/* content */}
         <Swiper
           navigation={{
-            prevEl: '.prevN',
-            nextEl: '.nextN',
+            prevEl: '.prev',
+            nextEl: '.next',
           }}
           modules={[Navigation]}
           spaceBetween={16}
@@ -87,7 +87,7 @@ const Watching: FC<{ data: AnimeWatchingProps[]; loading: boolean }> = ({
                   {data?.map((animData: AnimeWatchingProps) => {
                     return (
                       <SwiperSlide key={animData.id}>
-                        <AnimeComp data={animData} type='watching' />
+                        <AnimeComp data={animData} type='toWatch' />
                       </SwiperSlide>
                     );
                   })}
@@ -112,17 +112,17 @@ const Watching: FC<{ data: AnimeWatchingProps[]; loading: boolean }> = ({
 
         <Flex>
           <HStack ml='auto' mt={5}>
-            <div className='prevN'>
+            <div className='prev'>
               <IconButton
                 rounded={'full'}
                 aria-label='Prev'
                 icon={<HiOutlineChevronLeft />}
               />
             </div>
-            <div className='nextN'>
+            <div className='next'>
               <IconButton
                 rounded={'full'}
-                aria-label='next'
+                aria-label='Next'
                 icon={<HiOutlineChevronRight />}
               />
             </div>
@@ -133,4 +133,4 @@ const Watching: FC<{ data: AnimeWatchingProps[]; loading: boolean }> = ({
   );
 };
 
-export { Watching };
+export { Finished };

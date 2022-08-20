@@ -14,6 +14,7 @@ import {
   Skeleton,
   Box,
   Center,
+  useBreakpointValue,
 } from '@chakra-ui/react';
 
 import AnimeComp from './AnimeComp';
@@ -30,6 +31,11 @@ const ToWatch: FC<{ data: AnimeWatchingProps[]; loading: boolean }> = ({
   data,
   loading,
 }) => {
+  const slidesPerView = useBreakpointValue({
+    base: 1,
+    md: 2.2,
+  });
+
   return (
     <chakra.section mt={20}>
       <Container maxW='6xl'>
@@ -56,7 +62,7 @@ const ToWatch: FC<{ data: AnimeWatchingProps[]; loading: boolean }> = ({
           }}
           modules={[Navigation]}
           spaceBetween={16}
-          slidesPerView={2.2}
+          slidesPerView={slidesPerView}
           style={{
             cursor: 'grab',
           }}

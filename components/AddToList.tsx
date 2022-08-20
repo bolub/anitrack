@@ -26,7 +26,12 @@ import { FC, useState } from 'react';
 import { HiOutlinePlus, HiOutlineSearch } from 'react-icons/hi';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { useDebounce } from 'react-use';
-import { addToWatch, addToWatching } from '../API/addToList';
+import {
+  addToAbandoned,
+  addToFinished,
+  addToWatch,
+  addToWatching,
+} from '../API/addToList';
 import { getAllAnime } from '../API/all';
 import { AnimeSearchProps } from '../utils/GenericTypes';
 
@@ -63,6 +68,8 @@ const AddToList: FC<{ type: string }> = ({ type }) => {
       onSuccess(data) {
         queryClient.invalidateQueries(['allWatching']);
         queryClient.invalidateQueries(['allToWatch']);
+        queryClient.invalidateQueries(['allFinished']);
+        queryClient.invalidateQueries(['allAbandoned']);
 
         toast({
           description: 'Added successfully',
@@ -79,6 +86,44 @@ const AddToList: FC<{ type: string }> = ({ type }) => {
       onSuccess(data) {
         queryClient.invalidateQueries(['allWatching']);
         queryClient.invalidateQueries(['allToWatch']);
+        queryClient.invalidateQueries(['allFinished']);
+        queryClient.invalidateQueries(['allAbandoned']);
+
+        toast({
+          description: 'Added successfully',
+          status: 'success',
+          duration: 9000,
+          isClosable: true,
+          position: 'top-right',
+        });
+      },
+    });
+
+  const { mutate: addToFinishedHandler, isLoading: addToFinishedLoading } =
+    useMutation(addToFinished, {
+      onSuccess(data) {
+        queryClient.invalidateQueries(['allWatching']);
+        queryClient.invalidateQueries(['allToWatch']);
+        queryClient.invalidateQueries(['allFinished']);
+        queryClient.invalidateQueries(['allAbandoned']);
+
+        toast({
+          description: 'Added successfully',
+          status: 'success',
+          duration: 9000,
+          isClosable: true,
+          position: 'top-right',
+        });
+      },
+    });
+  const { mutate: addToAbandonedHandler, isLoading: addToAbandonedLoading } =
+    useMutation(addToAbandoned, {
+      onSuccess(data) {
+        queryClient.invalidateQueries(['allWatching']);
+        queryClient.invalidateQueries(['allToWatch']);
+        queryClient.invalidateQueries(['allFinished']);
+        queryClient.invalidateQueries(['allAbandoned']);
+
         toast({
           description: 'Added successfully',
           status: 'success',
@@ -170,7 +215,10 @@ const AddToList: FC<{ type: string }> = ({ type }) => {
                             mt={4}
                             leftIcon={<HiOutlinePlus />}
                             isLoading={
-                              addToWatchingLoading || addToWatchLoading
+                              addToWatchingLoading ||
+                              addToWatchLoading ||
+                              addToFinishedLoading ||
+                              addToAbandonedLoading
                             }
                             w='fit-content'
                             size='xs'
@@ -202,6 +250,56 @@ const AddToList: FC<{ type: string }> = ({ type }) => {
 
                               if (type === 'watching') {
                                 addToWatchingHandler([
+                                  {
+                                    fields: {
+                                      titleEnglish:
+                                        animData?.title ??
+                                        animData?.title_english,
+                                      titleJapanese:
+                                        animData?.title ??
+                                        animData?.title_japanese,
+                                      description: animData?.synopsis,
+                                      minsPerEpisode: animData?.duration,
+                                      episodeCount:
+                                        animData?.episodes?.toString(),
+                                      airedFrom: animData?.aired?.from,
+                                      airedTo: animData?.aired?.to,
+                                      currentlyAiring:
+                                        animData?.airing?.toString(),
+                                      imageUrl:
+                                        animData?.images?.webp?.large_image_url,
+                                    },
+                                  },
+                                ]);
+                              }
+
+                              if (type === 'finished') {
+                                addToFinishedHandler([
+                                  {
+                                    fields: {
+                                      titleEnglish:
+                                        animData?.title ??
+                                        animData?.title_english,
+                                      titleJapanese:
+                                        animData?.title ??
+                                        animData?.title_japanese,
+                                      description: animData?.synopsis,
+                                      minsPerEpisode: animData?.duration,
+                                      episodeCount:
+                                        animData?.episodes?.toString(),
+                                      airedFrom: animData?.aired?.from,
+                                      airedTo: animData?.aired?.to,
+                                      currentlyAiring:
+                                        animData?.airing?.toString(),
+                                      imageUrl:
+                                        animData?.images?.webp?.large_image_url,
+                                    },
+                                  },
+                                ]);
+                              }
+
+                              if (type === 'abandoned') {
+                                addToAbandonedHandler([
                                   {
                                     fields: {
                                       titleEnglish:

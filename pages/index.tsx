@@ -10,14 +10,29 @@ import Head from 'next/head';
 import { HiOutlineMoon, HiOutlineSun } from 'react-icons/hi';
 import { useQuery } from 'react-query';
 import { Watching } from '../components/Watching';
+import { Abandoned } from '../components/Watching/Abandoned';
+import { Finished } from '../components/Watching/Finished';
 import { ToWatch } from '../components/Watching/ToWatch';
-import { getAllToWatch, getAllWatching } from './../API/all';
+import {
+  getAllAbandoned,
+  getAllFinished,
+  getAllToWatch,
+  getAllWatching,
+} from './../API/all';
 
 const Home: NextPage = () => {
   const { data, isLoading } = useQuery('allWatching', getAllWatching);
   const { data: toWatchData, isLoading: toWatchLoading } = useQuery(
     'allToWatch',
     getAllToWatch
+  );
+  const { data: finishedData, isLoading: finishedLoading } = useQuery(
+    'allFinished',
+    getAllFinished
+  );
+  const { data: abandonedData, isLoading: abandonedLoading } = useQuery(
+    'allAbandoned',
+    getAllAbandoned
   );
 
   const { colorMode, toggleColorMode } = useColorMode();
@@ -58,6 +73,8 @@ const Home: NextPage = () => {
         {/* watching */}
         <Watching data={data?.records} loading={isLoading} />
         <ToWatch data={toWatchData?.records} loading={toWatchLoading} />
+        <Finished data={finishedData?.records} loading={finishedLoading} />
+        <Abandoned data={abandonedData?.records} loading={abandonedLoading} />
       </chakra.main>
     </>
   );

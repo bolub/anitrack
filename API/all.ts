@@ -20,3 +20,15 @@ export const getAllToWatch = async () => {
 
   return response.data;
 };
+
+export const getAllFinished = async () => {
+  const response = await API.get(`/finished`);
+
+  return response.data;
+};
+
+export const getAllAbandoned = async () => {
+  const response = await API.get(`/abandoned`);
+
+  return response.data;
+};
