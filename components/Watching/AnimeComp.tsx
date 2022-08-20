@@ -16,7 +16,6 @@ const AnimeComp: FC<{ data: AnimeWatchingProps; type: string }> = ({
   type,
 }) => {
   const animeData = data?.fields;
-
   const disclosure = useDisclosure();
 
   return (

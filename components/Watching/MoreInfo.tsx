@@ -34,9 +34,18 @@ import {
   HiOutlineDotsHorizontal,
 } from 'react-icons/hi';
 import { useMutation, useQueryClient } from 'react-query';
-import { removeFromWatch, removeFromWatching } from '../../API/removeFromList';
+import {
+  removeFromAbandoned,
+  removeFromFinished,
+  removeFromWatch,
+  removeFromWatching,
+} from '../../API/removeFromList';
 import { updateData, updateProps } from '../../API/updateData';
-import { addToWatching } from '../../API/addToList';
+import {
+  addToAbandoned,
+  addToFinished,
+  addToWatching,
+} from '../../API/addToList';
 dayjs.extend(advancedFormat);
 
 const MoreInfo: FC<{
@@ -70,9 +79,51 @@ const MoreInfo: FC<{
       },
     });
 
+  const {
+    mutate: removeAbandonedHandler,
+    isLoading: removeFromAbandonedLoading,
+  } = useMutation(removeFromAbandoned, {
+    onSuccess() {
+      queryClient.invalidateQueries(['allAbandoned']);
+
+      if (!isMoving) {
+        toast({
+          description: 'Removed',
+          status: 'success',
+          duration: 9000,
+          isClosable: true,
+          position: 'top-right',
+        });
+      }
+
+      setIsMoving(false);
+    },
+  });
+
+  const {
+    mutate: removeFinishedHandler,
+    isLoading: removeFromFinishedLoading,
+  } = useMutation(removeFromFinished, {
+    onSuccess() {
+      queryClient.invalidateQueries(['allFinished']);
+
+      if (!isMoving) {
+        toast({
+          description: 'Removed',
+          status: 'success',
+          duration: 9000,
+          isClosable: true,
+          position: 'top-right',
+        });
+      }
+
+      setIsMoving(false);
+    },
+  });
+
   const { mutate: removeWatchHandler, isLoading: removeFromWatchLoading } =
     useMutation(removeFromWatch, {
-      onSuccess(data) {
+      onSuccess() {
         queryClient.invalidateQueries(['allToWatch']);
 
         if (!isMoving) {
@@ -104,21 +155,49 @@ const MoreInfo: FC<{
       },
     });
 
-  const { mutate: addToWatchingHandler, isLoading: addToWatchingLoading } =
-    useMutation(addToWatching, {
-      onSuccess(data) {
-        queryClient.invalidateQueries(['allWatching']);
-        queryClient.invalidateQueries(['allToWatch']);
+  const { mutate: addToWatchingHandler } = useMutation(addToWatching, {
+    onSuccess(data) {
+      queryClient.invalidateQueries(['allWatching']);
+      queryClient.invalidateQueries(['allToWatch']);
 
-        toast({
-          description: 'Nice addition',
-          status: 'success',
-          duration: 9000,
-          isClosable: true,
-          position: 'top-right',
-        });
-      },
-    });
+      toast({
+        description: 'Nice addition',
+        status: 'success',
+        duration: 9000,
+        isClosable: true,
+        position: 'top-right',
+      });
+    },
+  });
+
+  const { mutate: addToFinishedHandler } = useMutation(addToFinished, {
+    onSuccess(data) {
+      queryClient.invalidateQueries(['allFinished']);
+
+      toast({
+        description: 'Added successfully',
+        status: 'success',
+        duration: 9000,
+        isClosable: true,
+        position: 'top-right',
+      });
+    },
+  });
+
+  const { mutate: addToAbandonedHandler } = useMutation(addToAbandoned, {
+    onSuccess(data) {
+      queryClient.invalidateQueries(['allWatching']);
+      queryClient.invalidateQueries(['allAbandoned']);
+
+      toast({
+        description: 'Added successfully',
+        status: 'success',
+        duration: 9000,
+        isClosable: true,
+        position: 'top-right',
+      });
+    },
+  });
 
   const [episodeWatching, setCurrentEpisode] = useState(
     animeData?.episodeWatching
@@ -144,12 +223,10 @@ const MoreInfo: FC<{
     typeof window === 'undefined'
       ? Buffer.from(str).toString('base64')
       : window.btoa(str);
-
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
       <ModalContent maxW='700px'>
-        {/* <ModalHeader>Modal Title</ModalHeader> */}
         <ModalCloseButton />
         <ModalBody mt='52px' px={{ base: 4, md: '60px' }}>
           {/* title */}
@@ -234,7 +311,10 @@ const MoreInfo: FC<{
                     justifyContent={'center'}
                     alignItems='center'
                   >
-                    {removeFromWatchLoading || removeWatchingLoading ? (
+                    {removeFromWatchLoading ||
+                    removeWatchingLoading ||
+                    removeFromAbandonedLoading ||
+                    removeFromFinishedLoading ? (
                       <Spinner size='sm' />
                     ) : (
                       <Icon mt='1' as={HiOutlineDotsHorizontal} />
@@ -242,6 +322,112 @@ const MoreInfo: FC<{
                   </MenuButton>
 
                   <MenuList>
+                    {/* Start watching */}
+                    {type !== 'watching' && (
+                      <MenuItem
+                        onClick={() => {
+                          removeWatchingHandler({
+                            id: data?.id,
+                          });
+
+                          addToWatchingHandler([
+                            {
+                              fields: {
+                                titleEnglish: animeData?.titleEnglish,
+                                titleJapanese: animeData?.titleJapanese,
+                                description: animeData?.description,
+                                minsPerEpisode: animeData?.minsPerEpisode,
+                                episodeCount: animeData?.episodeCount,
+                                // @ts-ignore
+                                airedFrom: animeData?.airedFrom,
+                                // @ts-ignore
+                                airedTo: animeData?.airedTo,
+                                currentlyAiring: animeData?.currentlyAiring,
+                                imageUrl: animeData?.imageUrl,
+                              },
+                            },
+                          ]);
+                        }}
+                      >
+                        {type !== 'finished' ? 'Start watching' : 'Rewatch'}
+                      </MenuItem>
+                    )}
+
+                    {/* Finish */}
+                    {type === 'watching' && (
+                      <MenuItem
+                        onClick={() => {
+                          setIsMoving(true);
+
+                          removeWatchingHandler({
+                            id: data?.id,
+                          });
+
+                          addToFinishedHandler([
+                            {
+                              fields: {
+                                titleEnglish: animeData?.titleEnglish,
+                                titleJapanese: animeData?.titleJapanese,
+                                description: animeData?.description,
+                                minsPerEpisode: animeData?.minsPerEpisode,
+                                episodeCount: animeData?.episodeCount,
+                                // @ts-ignore
+                                airedFrom: animeData?.airedFrom,
+                                // @ts-ignore
+                                airedTo: animeData?.airedTo,
+                                currentlyAiring: animeData?.currentlyAiring,
+                                imageUrl: animeData?.imageUrl,
+                              },
+                            },
+                          ]);
+                        }}
+                      >
+                        Finish watching
+                      </MenuItem>
+                    )}
+
+                    {/* Abandon */}
+                    {type !== 'finished' && type !== 'abandoned' && (
+                      <MenuItem
+                        onClick={() => {
+                          setIsMoving(true);
+
+                          if (type === 'watching') {
+                            removeWatchingHandler({
+                              id: data?.id,
+                            });
+                          }
+
+                          if (type === 'toWatch') {
+                            removeWatchHandler({
+                              id: data?.id,
+                            });
+                          }
+
+                          addToAbandonedHandler([
+                            {
+                              fields: {
+                                titleEnglish: animeData?.titleEnglish,
+                                titleJapanese: animeData?.titleJapanese,
+                                description: animeData?.description,
+                                minsPerEpisode: animeData?.minsPerEpisode,
+                                episodeCount: animeData?.episodeCount,
+                                // @ts-ignore
+                                airedFrom: animeData?.airedFrom,
+                                // @ts-ignore
+                                airedTo: animeData?.airedTo,
+                                currentlyAiring: animeData?.currentlyAiring,
+                                imageUrl: animeData?.imageUrl,
+                              },
+                            },
+                          ]);
+                        }}
+                      >
+                        Abandon
+                      </MenuItem>
+                    )}
+
+                    {/* Remove / Delete */}
                     <MenuItem
                       onClick={() => {
                         setIsMoving(true);
@@ -257,36 +443,21 @@ const MoreInfo: FC<{
                             id: data?.id,
                           });
                         }
+
+                        if (type === 'abandoned') {
+                          removeAbandonedHandler({
+                            id: data?.id,
+                          });
+                        }
+
+                        if (type === 'finished') {
+                          removeFinishedHandler({
+                            id: data?.id,
+                          });
+                        }
                       }}
                     >
                       Remove...forever
-                    </MenuItem>
-                    <MenuItem
-                      onClick={() => {
-                        removeWatchHandler({
-                          id: data?.id,
-                        });
-
-                        addToWatchingHandler([
-                          {
-                            fields: {
-                              titleEnglish: animeData?.titleEnglish,
-                              titleJapanese: animeData?.titleJapanese,
-                              description: animeData?.description,
-                              minsPerEpisode: animeData?.minsPerEpisode,
-                              episodeCount: animeData?.episodeCount,
-                              // @ts-ignore
-                              airedFrom: animeData?.airedFrom,
-                              // @ts-ignore
-                              airedTo: animeData?.airedTo,
-                              currentlyAiring: animeData?.currentlyAiring,
-                              imageUrl: animeData?.imageUrl,
-                            },
-                          },
-                        ]);
-                      }}
-                    >
-                      Start watching
                     </MenuItem>
                   </MenuList>
                 </Menu>

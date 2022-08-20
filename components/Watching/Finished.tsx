@@ -87,7 +87,7 @@ const Finished: FC<{ data: AnimeWatchingProps[]; loading: boolean }> = ({
                   {data?.map((animData: AnimeWatchingProps) => {
                     return (
                       <SwiperSlide key={animData.id}>
-                        <AnimeComp data={animData} type='toWatch' />
+                        <AnimeComp data={animData} type='finished' />
                       </SwiperSlide>
                     );
                   })}
