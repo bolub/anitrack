@@ -4,6 +4,7 @@ import {
   Button,
   Center,
   chakra,
+  Container,
   List,
   ListIcon,
   ListItem,
@@ -62,43 +63,49 @@ const Home: NextPage = () => {
       </Head>
 
       {authLoading && (
-        <Center h='70vh'>
-          <chakra.img src='https://i.pinimg.com/originals/5c/0d/b6/5c0db6d7d688da38a9d557914640a287.gif' />
-        </Center>
+        <Container maxW={'7xl'}>
+          <Center h='70vh'></Center>
+          <Center h='70vh'>
+            <chakra.img src='https://i.pinimg.com/originals/5c/0d/b6/5c0db6d7d688da38a9d557914640a287.gif' />
+          </Center>
+        </Container>
       )}
 
       {!isAuthenticated && !authLoading && (
-        <Center h='70vh'>
-          <Box maxW={'500px'}>
-            <chakra.h1 fontWeight={'bold'} fontSize='md'>
-              Rengoku was created to help with my anime hobby. Helps in showing:
-            </chakra.h1>
+        <Container maxW={'7xl'}>
+          <Center h='70vh'>
+            <Box maxW={'500px'}>
+              <chakra.h1 fontWeight={'bold'} fontSize='md'>
+                Rengoku was created to help with my anime hobby. Helps in
+                showing:
+              </chakra.h1>
 
-            <List spacing={3} mt={8}>
-              <ListItem>
-                <ListIcon as={HiCheckCircle} />
-                Anime I&apos;m watching
-              </ListItem>
-              <ListItem>
-                <ListIcon as={HiCheckCircle} />
-                Anime I want to watch
-              </ListItem>
-              <ListItem>
-                <ListIcon as={HiCheckCircle} />
-                Anime I&apos;ve finished
-              </ListItem>
-              {/* You can also use custom icons from react-icons */}
-              <ListItem>
-                <ListIcon as={HiCheckCircle} />
-                Anime I&apos;ve abandoned
-              </ListItem>
-            </List>
+              <List spacing={3} mt={8}>
+                <ListItem>
+                  <ListIcon as={HiCheckCircle} />
+                  Anime I&apos;m watching
+                </ListItem>
+                <ListItem>
+                  <ListIcon as={HiCheckCircle} />
+                  Anime I want to watch
+                </ListItem>
+                <ListItem>
+                  <ListIcon as={HiCheckCircle} />
+                  Anime I&apos;ve finished
+                </ListItem>
+                {/* You can also use custom icons from react-icons */}
+                <ListItem>
+                  <ListIcon as={HiCheckCircle} />
+                  Anime I&apos;ve abandoned
+                </ListItem>
+              </List>
 
-            <Button mt={16} onClick={() => loginWithPopup()}>
-              Log In
-            </Button>
-          </Box>
-        </Center>
+              <Button mt={16} onClick={() => loginWithPopup()}>
+                Log In
+              </Button>
+            </Box>
+          </Center>
+        </Container>
       )}
 
       {isAuthenticated && (
