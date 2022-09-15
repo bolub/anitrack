@@ -22,8 +22,10 @@ function MyApp({ Component, pageProps }: AppProps) {
   return (
     <ChakraProvider theme={theme}>
       <Auth0Provider
-        domain='boluseyi.us.auth0.com'
-        clientId='m4kJu9eU90v2KI23nMatpCUYtAkTqAHj'
+        // @ts-ignore
+        domain={process.env.NEXT_PUBLIC_DOMAIN}
+        // @ts-ignore
+        clientId={process.env.NEXT_PUBLIC_CLIENT_ID}
         redirectUri='http://localhost:3000/'
       >
         <QueryClientProvider client={queryClient}>

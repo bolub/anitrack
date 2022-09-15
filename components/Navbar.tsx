@@ -28,7 +28,10 @@ const Navbar = () => {
       <Container h='100px' maxW={'7xl'} display='flex'>
         <HStack>
           <Box maxW={'45px'}>
-            <Image src={colorMode === 'dark' ? LogoWhite : LogoBlack} />
+            <Image
+              alt='Rengoku'
+              src={colorMode === 'dark' ? LogoWhite : LogoBlack}
+            />
           </Box>
 
           <Text

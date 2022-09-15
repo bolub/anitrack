@@ -77,7 +77,7 @@ const Home: NextPage = () => {
             <List spacing={3} mt={8}>
               <ListItem>
                 <ListIcon as={HiCheckCircle} />
-                Anime I'm watching
+                Anime I&apos;m watching
               </ListItem>
               <ListItem>
                 <ListIcon as={HiCheckCircle} />
@@ -85,12 +85,12 @@ const Home: NextPage = () => {
               </ListItem>
               <ListItem>
                 <ListIcon as={HiCheckCircle} />
-                Anime I've finished
+                Anime I&apos;ve finished
               </ListItem>
               {/* You can also use custom icons from react-icons */}
               <ListItem>
                 <ListIcon as={HiCheckCircle} />
-                Anime I've abandoned
+                Anime I&apos;ve abandoned
               </ListItem>
             </List>
 
