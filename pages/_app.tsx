@@ -26,7 +26,7 @@ function MyApp({ Component, pageProps }: AppProps) {
         domain={process.env.NEXT_PUBLIC_DOMAIN}
         // @ts-ignore
         clientId={process.env.NEXT_PUBLIC_CLIENT_ID}
-        redirectUri='http://localhost:3000/'
+        redirectUri={process.env.NEXT_REDIRECT_URI}
       >
         <QueryClientProvider client={queryClient}>
           <ReactQueryDevtools initialIsOpen={false} />
