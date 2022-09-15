@@ -13,16 +13,27 @@ import '@fontsource/inter/900.css';
 
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
+import { Auth0Provider } from '@auth0/auth0-react';
+import Navbar from '../components/Navbar';
 
 function MyApp({ Component, pageProps }: AppProps) {
   const queryClient = new QueryClient();
 
   return (
     <ChakraProvider theme={theme}>
-      <QueryClientProvider client={queryClient}>
-        <ReactQueryDevtools initialIsOpen={false} />
-        <Component {...pageProps} />
-      </QueryClientProvider>
+      <Auth0Provider
+        domain='boluseyi.us.auth0.com'
+        clientId='m4kJu9eU90v2KI23nMatpCUYtAkTqAHj'
+        redirectUri='http://localhost:3000/'
+      >
+        <QueryClientProvider client={queryClient}>
+          <ReactQueryDevtools initialIsOpen={false} />
+
+          <Navbar />
+
+          <Component {...pageProps} />
+        </QueryClientProvider>
+      </Auth0Provider>
     </ChakraProvider>
   );
 }

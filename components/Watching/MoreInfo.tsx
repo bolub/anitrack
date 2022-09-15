@@ -326,7 +326,7 @@ const MoreInfo: FC<{
                     {type !== 'watching' && (
                       <MenuItem
                         onClick={() => {
-                          removeWatchingHandler({
+                          removeWatchHandler({
                             id: data?.id,
                           });
 
